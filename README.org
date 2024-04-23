@@ -1,0 +1,22 @@
+* SISU: [[https://github.com/vladmaraev/speechstate][SpeechState]] meets ISU
+
+Implementation based on: Kronlid, F., & Lager, T. (2007, May). [[https://archive.illc.uva.nl/semdial/proceedings/semdial2007_decalog_proceedings.pdf][Implementing the information-state update approach to dialogue management in a slightly extended SCXML]]. In Proceedings of the 11th International Workshop on the Semantics and Pragmatics of Dialogue (DECALOG) (pp. 99-106).
+
+
+How to run:
+1. Install NodeJS (LTS version) and Yarn (v2 or higher)
+2. Install all dependencies:
+   #+begin_src 
+     yarn
+   #+end_src
+3. Create a file =src/azure.ts= with the following contents:
+   #+begin_src 
+     export const KEY = "paste your AZURE KEY here";
+   #+end_src
+4. Run the project:
+   #+begin_src 
+     yarn dev
+   #+end_src
+5. Open the link that was shown in your browser, e.g. http://localhost:5173/
+6. Allow access to you microphone.
+7. When you unblock the pop-up window, and reload the page you will see the state inspector; this can be useful during development.
