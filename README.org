@@ -9,10 +9,7 @@ How to run:
    #+begin_src 
      yarn
    #+end_src
-3. Create a file =src/azure.ts= with the following contents:
-   #+begin_src 
-     export const KEY = "paste your AZURE KEY here";
-   #+end_src
+3. In =src/azure.ts=, insert your Azure key where marked
 4. Run the project:
    #+begin_src 
      yarn dev
