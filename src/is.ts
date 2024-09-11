@@ -74,7 +74,7 @@ export const initialIS = (): InformationState => {
         return null;
       },
     },
-    next_move: null,
+    next_moves: [],
     private: {
       plan: [],
       agenda: [

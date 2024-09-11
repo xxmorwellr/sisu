@@ -2,31 +2,31 @@ import { Move } from "./types";
 import { objectsEqual, WHQ } from "./utils";
 
 interface NLUMapping {
-  [index: string]: Move;
+  [index: string]: Move[];
 }
 type NLGMapping = [Move, string][];
 
 const nluMapping: NLUMapping = {
-  "where is the lecture?": {
+  "where is the lecture?": [{
     type: "ask",
     content: WHQ("booking_room"),
-  },
-  "what's your favorite food?": {
+  }],
+  "what's your favorite food?": [{
     type: "ask",
     content: WHQ("favorite_food"),
-  },
-  pizza: {
+  }],
+  pizza: [{
     type: "answer",
     content: "pizza",
-  },
-  "dialogue systems 2": {
+  }],
+  "dialogue systems 2": [{
     type: "answer",
     content: "LT2319",
-  },
-  "dialogue systems": {
+  }],
+  "dialogue systems": [{
     type: "answer",
     content: "LT2319",
-  },
+  }],
 };
 const nlgMapping: NLGMapping = [
   [{ type: "ask", content: WHQ("booking_course") }, "Which course?"],
@@ -47,22 +47,20 @@ const nlgMapping: NLGMapping = [
   ],
 ];
 
-export function nlg(move: Move | null): string {
-  console.log("generating...", move);
-  const mapping = nlgMapping.find((x) => objectsEqual(x[0], move));
-  if (mapping) {
-    return mapping[1];
+export function nlg(moves: Move[]): string {
+  console.log("generating...", moves);
+  function generateMove(move: Move): string {
+    const mapping = nlgMapping.find((x) => objectsEqual(x[0], move));
+    if (mapping) {
+      return mapping[1];
+    }
+    throw new Error(`Failed to generate move ${move}`);
   }
-  return "";
+  return moves.map(generateMove).join(' ');
 }
 
 /** NLU mapping function can be replaced by statistical NLU
  */
-export function nlu(utterance: string): Move {
-  return (
-    nluMapping[utterance.toLowerCase()] || {
-      type: "unknown",
-      content: "",
-    }
-  );
+export function nlu(utterance: string): Move[] {
+  return nluMapping[utterance.toLowerCase()] || [];
 }

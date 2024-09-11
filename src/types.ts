@@ -35,7 +35,6 @@ interface OtherMove {
   type:
     | "respond"
     | "greet"
-    | "unknown"
     | "raise"
     | "findout"
     | "consultDB"
@@ -56,12 +55,12 @@ export type Move = OtherMove | AnswerMove | AskMove;
 type Speaker = "usr" | "sys";
 
 export interface InformationState {
-  next_move: Move | null;
+  next_moves: Move[];
   domain: Domain;
   database: Database;
   private: { agenda: Move[]; plan: Move[]; bel: Proposition[] };
   shared: {
-    lu?: { speaker: Speaker; move: Move };
+    lu?: { speaker: Speaker; moves: Move[] };
     qud: Question[];
     com: Proposition[];
   };
@@ -78,7 +77,7 @@ export interface DMEContext extends TotalInformationState {
 export interface TotalInformationState {
   /** interface variables */
   latest_speaker?: Speaker;
-  latest_move?: Move;
+  latest_moves?: Move[];
 
   /** information state */
   is: InformationState;
@@ -87,16 +86,16 @@ export interface TotalInformationState {
 export type DMEvent =
   | { type: "CLICK" }
   | SpeechStateExternalEvent
-  | NextMoveEvent;
+  | NextMovesEvent;
 
-export type DMEEvent = SaysMoveEvent;
+export type DMEEvent = SaysMovesEvent;
 
-export type SaysMoveEvent = {
+export type SaysMovesEvent = {
   type: "SAYS";
-  value: { speaker: Speaker; move: Move };
+  value: { speaker: Speaker; moves: Move[] };
 };
 
-export type NextMoveEvent = {
-  type: "NEXT_MOVE";
-  value: Move;
+export type NextMovesEvent = {
+  type: "NEXT_MOVES";
+  value: Move[];
 };

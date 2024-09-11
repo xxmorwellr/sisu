@@ -1,26 +1,26 @@
 import { setup, assign, sendTo, AnyTransitionConfig } from "xstate";
 import { rules } from "./rules";
-import { SaysMoveEvent, DMEEvent, DMEContext } from "./types";
+import { SaysMovesEvent, DMEEvent, DMEContext } from "./types";
 
 /**
  * Creates a transition with a guarded ISU.
  *
  * @param nextState Target state.
  * @param ruleName Name of ISU rule.
- * @param [sendBackNextMove=false] If `true`, communicate next move to the parent machine.
+ * @param [sendBackNextMoves=false] If `true`, communicate next move to the parent machine.
  */
 function isuTransition(
   nextState: string,
   ruleName: string,
-  sendBackNextMove: boolean = false,
+  sendBackNextMoves: boolean = false,
 ): AnyTransitionConfig {
   return {
     target: nextState,
     guard: { type: "isu", params: { name: ruleName } },
-    actions: sendBackNextMove
+    actions: sendBackNextMoves
       ? [
           { type: "isu", params: { name: ruleName } },
-          { type: "sendBackNextMove" },
+          { type: "sendBackNextMoves" },
         ]
       : [{ type: "isu", params: { name: ruleName } }],
   };
@@ -40,12 +40,12 @@ export const dme = setup({
     },
   },
   actions: {
-    sendBackNextMove: sendTo(
+    sendBackNextMoves: sendTo(
       ({ context }) => context.parentRef,
       ({ context }) => {
         return {
-          type: "NEXT_MOVE",
-          value: context.is.next_move,
+          type: "NEXT_MOVES",
+          value: context.is.next_moves,
         };
       },
     ),
@@ -55,11 +55,15 @@ export const dme = setup({
       console.info(`[ISU ${ruleName}]`, newIS);
       return { is: newIS };
     }),
-    updateLatestMove: assign(({ event }) => {
-      console.info("[DM updateLatestMove]", event);
+    updateLatestMoves: assign(({ context, event }) => {
+      console.info("[DM updateLatestMoves]", event);
       return {
-        latest_move: (event as SaysMoveEvent).value.move,
-        latest_speaker: (event as SaysMoveEvent).value.speaker,
+        latest_moves: (event as SaysMovesEvent).value.moves,
+        latest_speaker: (event as SaysMovesEvent).value.speaker,
+        is: {
+          ...context.is,
+          next_moves: [],
+        },
       };
     }),
   },
@@ -104,7 +108,7 @@ export const dme = setup({
               target: "Integrate",
               actions: [
                 {
-                  type: "updateLatestMove",
+                  type: "updateLatestMoves",
                 },
                 { type: "isu", params: { name: "get_latest_move" } },
               ],

@@ -2,7 +2,7 @@ import { createActor, setup, AnyMachineSnapshot, sendTo } from "xstate";
 import { speechstate } from "speechstate";
 import { createBrowserInspector } from "@statelyai/inspect";
 import { KEY } from "./azure";
-import { DMContext, DMEvent, NextMoveEvent } from "./types";
+import { DMContext, DMEvent, NextMovesEvent } from "./types";
 import { nlg, nlu } from "./nlug";
 import { dme } from "./dme";
 import { initialIS } from "./is";
@@ -29,11 +29,11 @@ const dmMachine = setup({
     dme: dme,
   },
   actions: {
-    speak_next_move: ({ context, event }) =>
+    speak_next_moves: ({ context, event }) =>
       context.ssRef.send({
         type: "SPEAK",
         value: {
-          utterance: nlg((event as NextMoveEvent).value),
+          utterance: nlg((event as NextMovesEvent).value),
         },
       }),
     listen: ({ context }) =>
@@ -83,7 +83,7 @@ const dmMachine = setup({
                     type: "SAYS",
                     value: {
                       speaker: "usr",
-                      move: nlu(event.value[0].utterance),
+                      moves: nlu(event.value[0].utterance),
                     },
                   })),
                 },
@@ -95,10 +95,10 @@ const dmMachine = setup({
                     type: "SAYS",
                     value: {
                       speaker: "usr",
-                      move: {
+                      moves: [{
                         type: "ask",
                         content: WHQ("favorite_food"),
-                      },
+                      }],
                     },
                   }),
                 */
@@ -112,20 +112,20 @@ const dmMachine = setup({
           states: {
             Idle: {
               on: {
-                NEXT_MOVE: {
+                NEXT_MOVES: {
                   target: "Speaking",
                   actions: sendTo("dmeID", ({ event }) => ({
                     type: "SAYS",
                     value: {
                       speaker: "sys",
-                      move: event.value,
+                      moves: event.value,
                     },
                   })),
                 },
               },
             },
             Speaking: {
-              entry: "speak_next_move",
+              entry: "speak_next_moves",
               on: {
                 SPEAK_COMPLETE: {
                   target: "Idle",
@@ -141,7 +141,7 @@ const dmMachine = setup({
             input: ({ context, self }) => {
               return {
                 parentRef: self,
-                latest_move: context.latest_move,
+                latest_moves: context.latest_moves,
                 latest_speaker: context.latest_speaker,
                 is: context.is,
               };

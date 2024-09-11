@@ -1,6 +1,6 @@
 import { setup, createActor, sendTo, assign, waitFor } from "xstate";
 import { describe, expect, test } from "vitest";
-import { DMEContext, DMEEvent, NextMoveEvent } from "../src/types";
+import { DMEContext, DMEEvent, NextMovesEvent } from "../src/types";
 import { dme } from "../src/dme";
 import { nlu, nlg } from "../src/nlug";
 import { initialIS } from "../src/is";
@@ -56,14 +56,14 @@ describe("DME tests", () => {
                   type: "SAYS",
                   value: {
                     speaker: "usr",
-                    move: nlu(event.value),
+                    moves: nlu(event.value),
                   },
                 }),
                 { delay: 1000 },
               ),
             ],
           },
-          NEXT_MOVE: {
+          NEXT_MOVES: {
             actions: [
               sendTo(
                 "dmeTestID",
@@ -71,7 +71,7 @@ describe("DME tests", () => {
                   type: "SAYS",
                   value: {
                     speaker: "sys",
-                    move: (event as NextMoveEvent).value,
+                    moves: (event as NextMovesEvent).value,
                   },
                 }),
                 { delay: 1000 },
@@ -95,7 +95,7 @@ describe("DME tests", () => {
           input: ({ context, self }) => {
             return {
               parentRef: self,
-              latest_move: context.latest_move,
+              latest_moves: context.latest_moves,
               latest_speaker: context.latest_speaker,
               is: context.is,
             };
