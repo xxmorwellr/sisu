@@ -54,7 +54,7 @@ export function nlg(moves: Move[]): string {
     if (mapping) {
       return mapping[1];
     }
-    throw new Error(`Failed to generate move ${move}`);
+    throw new Error(`Failed to generate move ${JSON.stringify(move)}`);
   }
   return moves.map(generateMove).join(' ');
 }
