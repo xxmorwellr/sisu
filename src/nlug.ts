@@ -48,7 +48,7 @@ const nlgMapping: NLGMapping = [
 ];
 
 export function nlg(moves: Move[]): string {
-  console.log("generating...", moves);
+  console.log("generating moves", moves);
   function generateMove(move: Move): string {
     const mapping = nlgMapping.find((x) => objectsEqual(x[0], move));
     if (mapping) {
@@ -56,7 +56,9 @@ export function nlg(moves: Move[]): string {
     }
     throw new Error(`Failed to generate move ${JSON.stringify(move)}`);
   }
-  return moves.map(generateMove).join(' ');
+  const utterance = moves.map(generateMove).join(' ');
+  console.log("generated utterance:", utterance);
+  return utterance;
 }
 
 /** NLU mapping function can be replaced by statistical NLU

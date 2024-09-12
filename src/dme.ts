@@ -17,12 +17,7 @@ function isuTransition(
   return {
     target: nextState,
     guard: { type: "isu", params: { name: ruleName } },
-    actions: sendBackNextMoves
-      ? [
-          { type: "isu", params: { name: ruleName } },
-          { type: "sendBackNextMoves" },
-        ]
-      : [{ type: "isu", params: { name: ruleName } }],
+    actions: [{ type: "isu", params: { name: ruleName } }],
   };
 }
 
@@ -85,13 +80,18 @@ export const dme = setup({
         },
         SelectMove: {
           always: [
-            isuTransition("SelectionDone", "select_ask", true),
-            isuTransition("SelectionDone", "select_answer", true),
-            isuTransition("SelectionDone", "select_other", true),
+            isuTransition("SelectionDone", "select_ask"),
+            isuTransition("SelectionDone", "select_answer"),
+            isuTransition("SelectionDone", "select_other"),
             { target: "SelectionDone" },
           ],
         },
-        SelectionDone: { type: "final" },
+        SelectionDone: {
+          always: [
+            { actions: [ { type: "sendBackNextMoves" } ] },
+          ],
+          type: "final"
+        },
       },
       onDone: "Update",
     },
