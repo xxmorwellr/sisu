@@ -1,4 +1,4 @@
-import { Move, Proposition, Question } from "./types";
+import { Action, Proposition, Question } from "./types";
 
 export function objectsEqual(obj1: any, obj2: any) {
   if (obj1 === obj2) {
@@ -37,14 +37,14 @@ export function WHQ(predicate: string): Question {
   };
 }
 
-export function findout(q: Question): Move {
+export function findout(q: Question): Action {
   return {
     type: "findout",
     content: q,
   };
 }
 
-export function consultDB(q: Question): Move {
+export function consultDB(q: Question): Action {
   return {
     type: "consultDB",
     content: q,

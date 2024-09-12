@@ -3,6 +3,7 @@ import {
   TotalInformationState,
   InformationState,
   Move,
+  Action,
 } from "./types";
 import { objectsEqual } from "./utils";
 
@@ -288,12 +289,12 @@ export const rules: Rules = {
           !is.shared.com.some((x) => objectsEqual(x, bel)) &&
           is.domain.relevant(bel, topQUD)
         ) {
-          const respondMove: Move = { type: "respond", content: topQUD };
+          const respondAction: Action = { type: "respond", content: topQUD };
           return () => ({
             ...is,
             private: {
               ...is.private,
-              agenda: [respondMove, ...is.private.agenda],
+              agenda: [respondAction, ...is.private.agenda],
             },
           });
         }
@@ -324,7 +325,7 @@ export const rules: Rules = {
     if (is.private.agenda[0] && is.private.agenda[0].type === "greet") {
       return () => ({
         ...is,
-        next_moves: [ ...is.next_moves, is.private.agenda[0] ]
+        next_moves: [ ...is.next_moves, is.private.agenda[0] as Move ]
       });
     }
   },

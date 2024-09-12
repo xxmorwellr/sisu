@@ -14,7 +14,7 @@ export type Domain = {
 export type PlanInfo = {
   type: string;
   content: null | Proposition | ShortAnswer | Question;
-  plan: Move[];
+  plan: Action[];
 };
 
 export type Database = {
@@ -31,15 +31,10 @@ export type Question = WhQuestion;
 type WhQuestion = { type: "whq"; predicate: string };
 
 interface OtherMove {
-  // no difference between Move and Action for now
   type:
-    | "respond"
     | "greet"
-    | "raise"
-    | "findout"
-    | "consultDB"
     | "request";
-  content: null | Proposition | ShortAnswer | Question;
+  content: null | string;
 }
 interface AnswerMove {
   type: "answer";
@@ -52,13 +47,23 @@ interface AskMove {
 
 export type Move = OtherMove | AnswerMove | AskMove;
 
+export type Action = {
+  type:
+    | "greet"
+    | "respond"
+    | "raise"
+    | "findout"
+    | "consultDB";
+  content: null | Question;
+}
+
 type Speaker = "usr" | "sys";
 
 export interface InformationState {
   next_moves: Move[];
   domain: Domain;
   database: Database;
-  private: { agenda: Move[]; plan: Move[]; bel: Proposition[] };
+  private: { agenda: Action[]; plan: Action[]; bel: Proposition[] };
   shared: {
     lu?: { speaker: Speaker; moves: Move[] };
     qud: Question[];
